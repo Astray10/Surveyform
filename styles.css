@@ -1,0 +1,228 @@
+/* Base styles */
+body {
+    font-family: 'Roboto', sans-serif; /* Updated font */
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4; /* Light background */
+}
+
+.container {
+    max-width: 800px; /* Set a max width for the container */
+    margin: 0 auto; /* Center the container */
+    background: #ffffff; /* White background for form */
+    padding: 30px; /* Updated padding for more space */
+    border-radius: 10px; /* More rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Header styles */
+h1, h2, h3 {
+    text-align: center;
+    color: #343a40; /* Darker text for contrast */
+    margin: 20px 0; /* Space above and below headings */
+    font-weight: 600; /* Bolder headings */
+}
+
+/* Input styles */
+input[type="text"], textarea, select {
+    width: calc(100% - 20px); /* Adjusted width for padding */
+    padding: 12px; /* Consistent padding */
+    margin: 10px 0;
+    border: 1px solid #ced4da; /* Light gray border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Increased font size for readability */
+    box-sizing: border-box; /* Include padding and border in element's total width */
+    transition: border-color 0.3s, box-shadow 0.3s; /* Transition for border color */
+}
+
+    input[type="text"]:focus, textarea:focus, select:focus {
+        border-color: #007bff; /* Blue border on focus */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add subtle shadow on focus */
+    }
+
+/* Button styles */
+button {
+    padding: 12px 24px; /* Increased padding for buttons */
+    background-color: #007bff; /* Blue background */
+    color: white; /* White text */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px; /* Larger font size for buttons */
+    transition: background-color 0.3s, transform 0.2s; /* Transition for background color */
+    display: flex; /* For icon alignment */
+    align-items: center; /* Center icon and text */
+    margin-top: 15px; /* Space above the button */
+    width: 100%; /* Full width for buttons */
+}
+
+    /* Button hover effect */
+    button:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+        transform: translateY(-2px); /* Lift effect on hover */
+    }
+
+    /* Icon styles */
+    button .icon {
+        margin-right: 10px; /* Space between icon and text */
+        font-size: 20px; /* Increased icon size */
+    }
+
+/* Question block styles */
+.question-block {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa; /* Light gray background for question blocks */
+    border: 1px solid #dee2e6; /* Gray border */
+    border-radius: 5px; /* Rounded corners */
+    transition: transform 0.3s, background-color 0.3s; /* Animation on hover */
+}
+
+    /* Scale on hover */
+    .question-block:hover {
+        transform: scale(1.02); /* Slightly enlarge on hover */
+        background-color: #e9ecef; /* Slightly darker on hover */
+    }
+
+/* Options container styles */
+.options-container {
+    margin-top: 10px;
+}
+
+/* Preview section styles */
+#surveyPreview {
+    padding: 20px; /* More padding for preview */
+    border: 1px solid #ced4da; /* Light gray border */
+    background-color: #f9f9f9; /* Light background */
+    border-radius: 5px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Preview question styles */
+.preview-question {
+    font-weight: bold;
+    margin-top: 15px;
+    color: #343a40; /* Darker text color */
+}
+
+/* Preview option styles */
+.preview-option {
+    margin-left: 20px;
+    display: block;
+    padding: 5px 0;
+}
+
+/* General styles for icons */
+.icon {
+    font-size: 20px; /* Increased icon size for better visibility */
+    vertical-align: middle; /* Align icon with text */
+}
+
+/* Media queries for responsive design */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px; /* Reduced padding on smaller screens */
+    }
+
+    input[type="text"], textarea, select, button {
+        width: 100%; /* Full width for inputs and buttons */
+    }
+}
+
+.question-block.dragging {
+    opacity: 0.5;
+}
+
+/* Customization Panel */
+#customizationPanel {
+    border: 1px solid #ccc;
+    border-radius: 5px; /* Rounded corners */
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #ffffff; /* White background for the panel */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+    #customizationPanel h3 {
+        margin-bottom: 15px;
+    }
+
+/* Customization fields */
+.customization-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px; /* Space between fields */
+}
+
+    .customization-field label {
+        flex-basis: 40%; /* Label takes up 40% width */
+        font-weight: bold; /* Bold labels */
+    }
+
+    .customization-field input[type="color"],
+    .customization-field select {
+        flex-basis: 55%; /* Input takes up the remaining width */
+    }
+
+/* Apply customization button */
+#applyCustomizationBtn {
+    background-color: #007BFF; /* Bootstrap primary color */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block; /* Center the button */
+    margin: 0 auto; /* Center the button */
+    transition: background-color 0.3s; /* Transition for hover effect */
+}
+
+    #applyCustomizationBtn:hover {
+        background-color: #0056b3; /* Darker shade on hover */
+    }
+
+/* Preview container */
+.preview-container {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.preview-question {
+    margin-bottom: 15px;
+}
+
+/* Question description styles */
+.question-description {
+    font-style: italic; /* Italics for descriptions */
+    color: #555; /* Gray color for description text */
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+    .customization-field {
+        flex-direction: column;
+    }
+
+        .customization-field label {
+            flex-basis: auto;
+            margin-bottom: 5px;
+        }
+
+    #applyCustomizationBtn {
+        width: 100%; /* Make the button full-width on small screens */
+    }
+
+    #surveyForm, #surveyPreview, #customizationPanel {
+        padding: 15px; /* Adjust padding for smaller screens */
+    }
+
+    h1, h2, h3 {
+        font-size: 1.5em; /* Adjust heading sizes */
+    }
+}

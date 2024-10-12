@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Feedback Survey Generator</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .header {
+            background-color: #28a745;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        input, textarea, button, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Ensures padding is included in the width */
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #218838;
+            }
+
+        #questionsContainer {
+            margin-top: 20px;
+        }
+
+        .question {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 5px;
+        }
+
+        .removeQuestion {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            width: 100%; /* Ensure it takes full width */
+        }
+
+            .removeQuestion:hover {
+                background-color: #c82333;
+            }
+
+        #previewContent {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 20px;
+            box-sizing: border-box; /* Ensures padding is included */
+        }
+
+        .optionInput {
+            margin: 5px 0;
+            padding: 10px;
+            width: calc(100% - 22px); /* Adjust width to fit with padding */
+            background-color: #f8f9fa;
+            color: black;
+            box-sizing: border-box; /* Ensures padding is included */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Feedback Survey Generator</h1>
+    </div>
+    <div class="container">
+        <h2>Create Your Feedback Survey</h2>
+        <form id="formSurvey">
+            <input type="text" id="surveyTitle" placeholder="Enter Feedback Title" required>
+            <textarea id="surveyDescription" placeholder="What feedback do you want?" required></textarea>
+            <div id="questionsContainer"></div>
+            <button type="button" id="addQuestionBtn"><i class="fas fa-plus"></i> Add Question</button>
+        </form>
+        <div id="surveyPreview">
+            <h3>Your Survey Preview</h3>
+            <div id="previewContent"></div>
+            <button id="submitSurveyBtn">Submit Survey</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('addQuestionBtn').addEventListener('click', function () {
+            const questionContainer = document.createElement('div');
+            questionContainer.className = 'question';
+            questionContainer.innerHTML = `
+                    <input type="text" placeholder="Question" required>
+                    <select class="questionType">
+                        <option value="text">Text Answer</option>
+                        <option value="checkbox">Agree/Disagree</option>
+                        <option value="dropdown">Dropdown (Select One)</option>
+                        <option value="multiple-choice">Multiple Choice</option>
+                    </select>
+                    <div class="optionsContainer" style="display: none;">
+                        <input type="text" placeholder="Option 1" class="optionInput" required>
+                        <input type="text" placeholder="Option 2" class="optionInput" required>
+                        <button type="button" class="addOptionBtn"><i class="fas fa-plus"></i> Add Option</button>
+                    </div>
+                    <button type="button" class="removeQuestion">Remove Question</button>
+                `;
+            document.getElementById('questionsContainer').appendChild(questionContainer);
+
+            // Toggle options based on question type
+            const questionTypeSelect = questionContainer.querySelector('.questionType');
+            questionTypeSelect.addEventListener('change', function () {
+                const optionsContainer = questionContainer.querySelector('.optionsContainer');
+                optionsContainer.style.display = (this.value === 'dropdown' || this.value === 'multiple-choice') ? 'block' : 'none';
+            });
+
+            // Event listener for removing the question
+            questionContainer.querySelector('.removeQuestion').addEventListener('click', function () {
+                questionContainer.remove();
+                updatePreview(); // Update preview after removal
+            });
+
+            // Add option button
+            questionContainer.querySelector('.addOptionBtn').addEventListener('click', function () {
+                const optionInput = document.createElement('input');
+                optionInput.type = 'text';
+                optionInput.placeholder = 'Another Option';
+                optionInput.className = 'optionInput';
+                questionContainer.querySelector('.optionsContainer').appendChild(optionInput);
+            });
+
+            updatePreview(); // Update preview after adding
+        });
+
+        function updatePreview() {
+            const title = document.getElementById('surveyTitle').value;
+            const description = document.getElementById('surveyDescription').value;
+            const questions = document.querySelectorAll('.question');
+            const previewContent = document.getElementById('previewContent');
+
+            // Clear the previous preview content
+            previewContent.innerHTML = `
+                    <h4 style="text-align:center;">${title}</h4>
+                    <p style="text-align:center;">${description}</p>
+                    <hr>
+                `;
+
+            // Loop through each question and format it for preview
+            questions.forEach(question => {
+                const questionText = question.querySelector('input[type="text"]').value;
+                const questionType = question.querySelector('.questionType').value;
+                const options = question.querySelectorAll('.optionsContainer input[type="text"]');
+
+                // Create a new element for the question
+                const questionElement = document.createElement('div');
+                questionElement.className = 'preview-question';
+                const questionHeader = document.createElement('strong');
+                questionHeader.textContent = questionText;
+                questionElement.appendChild(questionHeader);
+
+                // Add appropriate content based on question type
+                if (questionType === 'text') {
+                    const answerInput = document.createElement('input');
+                    answerInput.type = 'text';
+                    answerInput.placeholder = 'Your answer...';
+                    questionElement.appendChild(answerInput);
+                } else if (questionType === 'checkbox') {
+                    const agreeCheckbox = document.createElement('input');
+                    agreeCheckbox.type = 'checkbox';
+                    agreeCheckbox.id = questionText + "-agree";
+                    const agreeLabel = document.createElement('label');
+                    agreeLabel.textContent = 'Agree';
+                    agreeLabel.setAttribute('for', agreeCheckbox.id);
+
+                    const disagreeCheckbox = document.createElement('input');
+                    disagreeCheckbox.type = 'checkbox';
+                    disagreeCheckbox.id = questionText + "-disagree";
+                    const disagreeLabel = document.createElement('label');
+                    disagreeLabel.textContent = 'Disagree';
+                    disagreeLabel.setAttribute('for', disagreeCheckbox.id);
+
+                    questionElement.appendChild(agreeCheckbox);
+                    questionElement.appendChild(agreeLabel);
+                    questionElement.appendChild(disagreeCheckbox);
+                    questionElement.appendChild(disagreeLabel);
+                } else if (questionType === 'dropdown' || questionType === 'multiple-choice') {
+                    options.forEach(option => {
+                        if (option.value) { // Ensure option is not empty
+                            const label = document.createElement('label');
+                            label.textContent = option.value;
+                            const radioInput = document.createElement('input');
+                            radioInput.type = 'radio';
+                            radioInput.name = questionText;
+                            radioInput.value = option.value;
+                            questionElement.appendChild(radioInput);
+                            questionElement.appendChild(label);
+                        }
+                    });
+                }
+
+                previewContent.appendChild(questionElement);
+            });
+        }
+
+        document.getElementById('submitSurveyBtn').addEventListener('click', function () {
+            const title = document.getElementById('surveyTitle').value;
+            const description = document.getElementById('surveyDescription').value;
+
+            if (!title || !description) {
+                alert("Please fill out the event name and description before submitting.");
+                return;
+            }
+
+            alert("Survey Submitted Successfully!\n\n" + "Title: " + title + "\nDescription: " + description);
+        });
+
+        // Initial update to the preview when the page loads
+        updatePreview();
+    </script>
+</body>
+</html>

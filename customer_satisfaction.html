@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Customer Satisfaction Survey Generator</title>
+    <style>
+        body {
+            background-color: #f4f7fa;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #007bff;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            border-bottom: 5px solid #0056b3;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input, textarea, button, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+            input:focus, textarea:focus, select:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        .question {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .removeQuestion {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+            .removeQuestion:hover {
+                background-color: #c82333;
+            }
+
+        .preview-question {
+            background-color: #e9ecef;
+            padding: 15px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .stars {
+            color: gold;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Customer Satisfaction Survey Generator</h1>
+    </div>
+    <div class="container">
+        <h2>Create Your Survey</h2>
+        <form id="formSurvey">
+            <input type="text" id="surveyTitle" placeholder="Survey Title" required>
+            <textarea id="surveyDescription" placeholder="What do you want to know about customer satisfaction?" rows="3" required></textarea>
+            <div id="questionsContainer"></div>
+            <button type="button" id="addQuestionBtn"><i class="fas fa-plus"></i> Add Question</button>
+        </form>
+        <div id="surveyPreview">
+            <h3>Your Survey Preview</h3>
+            <div id="previewContent"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('addQuestionBtn').addEventListener('click', function () {
+            const questionContainer = document.createElement('div');
+            questionContainer.className = 'question';
+            questionContainer.innerHTML = `
+                    <input type="text" placeholder="Question" required>
+                    <select class="questionType">
+                        <option value="agree-disagree">Agree/Disagree</option>
+                        <option value="rating">Rating (1-5)</option>
+                        <option value="open-ended">Open-ended</option>
+                    </select>
+                    <button type="button" class="removeQuestion">Remove Question</button>
+                `;
+            document.getElementById('questionsContainer').appendChild(questionContainer);
+
+            // Event listener for removing the question
+            questionContainer.querySelector('.removeQuestion').addEventListener('click', function () {
+                questionContainer.remove();
+                updatePreview(); // Update preview after removal
+            });
+
+            updatePreview(); // Update preview after adding
+        });
+
+        function updatePreview() {
+            const title = document.getElementById('surveyTitle').value;
+            const description = document.getElementById('surveyDescription').value;
+            const questions = document.querySelectorAll('.question');
+            const previewContent = document.getElementById('previewContent');
+
+            // Clear the previous preview content
+            previewContent.innerHTML = `
+                    <h4 style="text-align:center;">${title}</h4>
+                    <p style="text-align:center;">${description}</p>
+                    <hr>
+                `;
+
+            // Loop through each question and format it for preview
+            questions.forEach(question => {
+                const questionText = question.querySelector('input[type="text"]').value;
+                const questionType = question.querySelector('.questionType').value;
+
+                // Create a new element for the question
+                const questionElement = document.createElement('div');
+                questionElement.className = 'preview-question';
+
+                const questionHeader = document.createElement('strong');
+                questionHeader.textContent = questionText;
+
+                questionElement.appendChild(questionHeader);
+
+                // Add appropriate content based on question type
+                if (questionType === 'agree-disagree') {
+                    const agreeButton = document.createElement('button');
+                    agreeButton.textContent = "Agree";
+                    agreeButton.style.marginRight = '10px';
+                    agreeButton.onclick = () => alert(`${questionText} - You selected: Agree`);
+
+                    const disagreeButton = document.createElement('button');
+                    disagreeButton.textContent = "Disagree";
+                    disagreeButton.onclick = () => alert(`${questionText} - You selected: Disagree`);
+
+                    questionElement.appendChild(agreeButton);
+                    questionElement.appendChild(disagreeButton);
+                } else if (questionType === 'rating') {
+                    const starsContainer = document.createElement('div');
+                    for (let i = 1; i <= 5; i++) {
+                        const star = document.createElement('span');
+                        star.innerHTML = '&#9733;'; // Star character
+                        star.className = 'stars';
+                        star.dataset.value = i; // Store the value of the star
+                        star.onclick = function () {
+                            alert(`${questionText} - You selected ${this.dataset.value} star${this.dataset.value > 1 ? 's' : ''}`);
+                        };
+                        starsContainer.appendChild(star);
+                    }
+                    questionElement.appendChild(starsContainer);
+                } else if (questionType === 'open-ended') {
+                    const openEndedInput = document.createElement('input');
+                    openEndedInput.type = 'text';
+                    openEndedInput.placeholder = 'Your response...';
+                    questionElement.appendChild(openEndedInput);
+                }
+
+                // Append the question element to the preview content
+                previewContent.appendChild(questionElement);
+            });
+        }
+    </script>
+</body>
+</html>

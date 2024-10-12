@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Generated Surveys</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link your CSS file -->
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Review Generated Surveys</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="review.html">Review Generated Forms</a></li>
+                <li><a href="#" id="addQuestionBtn">Create New Survey</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div id="formContainer">
+        <h2>Generated Forms</h2>
+        <select id="formSelect" onchange="showForm()">
+            <option value="">Select a Form</option>
+            <!-- Forms will be added here dynamically -->
+        </select>
+
+        <div id="formDisplay"></div> <!-- Container to show the selected form -->
+    </div>
+
+    <script src="script.js"></script> <!-- Link to your JS file -->
+</body>
+</html>

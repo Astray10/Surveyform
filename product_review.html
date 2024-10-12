@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Product Review Generator</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: #28a745;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        input, textarea, button, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+            button:hover {
+                background-color: #218838;
+            }
+
+        #questionsContainer {
+            margin-top: 20px;
+        }
+
+        .question {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(0, 123, 255, 0.1);
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .removeQuestion {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+            .removeQuestion:hover {
+                background-color: #c82333;
+            }
+
+        #previewContent {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 20px;
+            box-sizing: border-box;
+        }
+
+        .rating {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            margin-top: 5px;
+        }
+
+        .star {
+            cursor: pointer;
+            font-size: 24px;
+            color: #ffcc00; /* Gold color for stars */
+        }
+
+        .optionInput {
+            margin: 5px 0;
+            padding: 10px;
+            width: calc(100% - 22px);
+            background-color: #f8f9fa;
+            color: black;
+            box-sizing: border-box;
+        }
+
+        .optionsContainer {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Product Review Survey Generator</h1>
+    </div>
+    <div class="container">
+        <h2>Compose Your Product Review Survey</h2>
+        <form id="formSurvey">
+            <input type="text" id="surveyTitle" placeholder="Product Review Title" required>
+            <textarea id="surveyDescription" placeholder="What do you want to know about the product?" required></textarea>
+            <div id="questionsContainer"></div>
+            <button type="button" id="addQuestionBtn"><i class="fas fa-plus"></i> Add Review Question</button>
+        </form>
+        <div id="surveyPreview">
+            <h3>Your Product Review Preview</h3>
+            <div id="previewContent"></div>
+            <button id="submitSurveyBtn">Submit Survey</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('addQuestionBtn').addEventListener('click', function () {
+            const questionContainer = document.createElement('div');
+            questionContainer.className = 'question';
+            questionContainer.innerHTML = `
+                    <input type="text" placeholder="Question" required>
+                    <select class="questionType">
+                        <option value="text">Open-ended Text</option>
+                        <option value="checkbox">Agree/Disagree</option>
+                        <option value="dropdown">Dropdown (Select One)</option>
+                        <option value="multiple-choice">Multiple Choice</option>
+                        <option value="rating">Star Rating</option>
+                    </select>
+                    <div class="optionsContainer" style="display: none;">
+                        <input type="text" placeholder="Option 1" class="optionInput" required>
+                        <input type="text" placeholder="Option 2" class="optionInput" required>
+                        <button type="button" class="addOptionBtn"><i class="fas fa-plus"></i> Add Option</button>
+                    </div>
+                    <button type="button" class="removeQuestion">Remove Question</button>
+                `;
+            document.getElementById('questionsContainer').appendChild(questionContainer);
+
+            // Toggle options based on question type
+            const questionTypeSelect = questionContainer.querySelector('.questionType');
+            questionTypeSelect.addEventListener('change', function () {
+                const optionsContainer = questionContainer.querySelector('.optionsContainer');
+                optionsContainer.style.display = (this.value === 'dropdown' || this.value === 'multiple-choice') ? 'block' : 'none';
+            });
+
+            // Event listener for removing the question
+            questionContainer.querySelector('.removeQuestion').addEventListener('click', function () {
+                questionContainer.remove();
+                updatePreview(); // Update preview after removal
+            });
+
+            // Add option button
+            questionContainer.querySelector('.addOptionBtn').addEventListener('click', function () {
+                const optionInput = document.createElement('input');
+                optionInput.type = 'text';
+                optionInput.placeholder = 'Another Option';
+                optionInput.className = 'optionInput';
+                questionContainer.querySelector('.optionsContainer').appendChild(optionInput);
+            });
+
+            updatePreview(); // Update preview after adding
+        });
+
+        function updatePreview() {
+            const title = document.getElementById('surveyTitle').value;
+            const description = document.getElementById('surveyDescription').value;
+            const questions = document.querySelectorAll('.question');
+            const previewContent = document.getElementById('previewContent');
+
+            // Clear the previous preview content
+            previewContent.innerHTML = `
+                    <h4 style="text-align:center;">${title}</h4>
+                    <p style="text-align:center;">${description}</p>
+                    <hr>
+                `;
+
+            // Loop through each question and format it for preview
+            questions.forEach(question => {
+                const questionText = question.querySelector('input[type="text"]').value;
+                const questionType = question.querySelector('.questionType').value;
+                const options = question.querySelectorAll('.optionsContainer input[type="text"]');
+
+                // Create a new element for the question
+                const questionElement = document.createElement('div');
+                questionElement.className = 'preview-question';
+                const questionHeader = document.createElement('strong');
+                questionHeader.textContent = questionText;
+                questionElement.appendChild(questionHeader);
+
+                // Add appropriate content based on question type
+                if (questionType === 'text') {
+                    const answerInput = document.createElement('textarea');
+                    answerInput.placeholder = 'Your answer...';
+                    questionElement.appendChild(answerInput);
+                } else if (questionType === 'checkbox') {
+                    const agreeLabel = document.createElement('label');
+                    agreeLabel.textContent = 'Agree';
+                    const agreeCheckbox = document.createElement('input');
+                    agreeCheckbox.type = 'checkbox';
+                    agreeCheckbox.id = questionText + "-agree";
+                    agreeCheckbox.value = "Agree";
+                    agreeLabel.prepend(agreeCheckbox);
+                    questionElement.appendChild(agreeLabel);
+
+                    const disagreeLabel = document.createElement('label');
+                    disagreeLabel.textContent = 'Disagree';
+                    const disagreeCheckbox = document.createElement('input');
+                    disagreeCheckbox.type = 'checkbox';
+                    disagreeCheckbox.id = questionText + "-disagree";
+                    disagreeCheckbox.value = "Disagree";
+                    disagreeLabel.prepend(disagreeCheckbox);
+                    questionElement.appendChild(disagreeLabel);
+                } else if (questionType === 'dropdown' || questionType === 'multiple-choice') {
+                    options.forEach(option => {
+                        if (option.value) { // Ensure option is not empty
+                            const label = document.createElement('label');
+                            label.textContent = option.value;
+                            const input = document.createElement('input');
+                            input.type = questionType === 'dropdown' ? 'radio' : 'checkbox';
+                            input.name = questionText;
+                            input.value = option.value;
+                            label.prepend(input);
+                            questionElement.appendChild(label);
+                        }
+                    });
+                } else if (questionType === 'rating') {
+                    const ratingContainer = document.createElement('div');
+                    ratingContainer.className = 'rating';
+                    for (let i = 1; i <= 5; i++) {
+                        const star = document.createElement('span');
+                        star.className = 'star';
+                        star.innerHTML = '★';
+                        star.dataset.rating = i;
+                        star.addEventListener('click', function () {
+                            const ratingStars = ratingContainer.querySelectorAll('.star');
+                            ratingStars.forEach(s => s.style.color = '#ccc'); // Reset color
+                            for (let j = 0; j < i; j++) {
+                                ratingStars[j].style.color = '#ffcc00'; // Set color to gold
+                            }
+                        });
+                        ratingContainer.appendChild(star);
+                    }
+                    questionElement.appendChild(ratingContainer);
+                }
+
+                previewContent.appendChild(questionElement);
+            });
+        }
+
+        document.getElementById('surveyTitle').addEventListener('input', updatePreview);
+        document.getElementById('surveyDescription').addEventListener('input', updatePreview);
+
+        // Handle survey submission
+        document.getElementById('submitSurveyBtn').addEventListener('click', function () {
+            const title = document.getElementById('surveyTitle').value;
+            const description = document.getElementById('surveyDescription').value;
+            const questions = document.querySelectorAll('.question');
+            const surveyData = {
+                title: title,
+                description: description,
+                questions: []
+            };
+
+            questions.forEach(question => {
+                const questionText = question.querySelector('input[type="text"]').value;
+                const questionType = question.querySelector('.questionType').value;
+                const options = Array.from(question.querySelectorAll('.optionsContainer input[type="text"]')).map(opt => opt.value).filter(opt => opt);
+
+                surveyData.questions.push({
+                    text: questionText,
+                    type: questionType,
+                    options: options
+                });
+            });
+
+            console.log("Survey Submitted: ", surveyData);
+            alert("Survey submitted successfully! Check console for data.");
+            // You can add further processing logic here, like sending data to a server
+        });
+    </script>
+</body>
+</html>
